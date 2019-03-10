@@ -1,0 +1,38 @@
+===========================================================================================================
+
+												CERINTA
+
+===========================================================================================================
+
+Scopul temei este realizarea unui sistem pentru efectuarea de operatiuni bancare.  Obiectivele temei sunt:
+	• Intelegerea mecanismelor de dezvoltare a aplicatiilor folosind socketi UDP si TCP.
+	• Dezvoltarea unei aplicatii practice de tip client-server ce foloseste socketi.
+
+===========================================================================================================
+
+											  IMPLEMENTARE
+
+===========================================================================================================
+
+	In fisierul de client am deschis 2 socketi, unul TCP folosit pentru IBANK> si unul UDP folosit 
+pentru UNLOCK>. In caz de eroare la apelul oricarei functii legate de socketi (connect, socket, etc.)
+se intoarce codul de eroare -10 pe ecran cu mesajul corespunzator. Pentru fiecare client in parte se deschide
+un fisier cu numele client-(PID).log in care se vor afisa comenzile si raspunsurile ulterior. 
+Apoi am folosit o bucla infinita in care am apelat functia select pentru a multiplexa intre citirea de 
+la tastatura, socketul TCP si socketulUDP. In cazul citirii de la tastatura, se primeau comenzi asa cum 
+este precizat si in enuntul temei. In cazul primirii de date pe socketul TCP, se scriau raspunsurile in 
+fisierul de log si se trata fiecare caz in parte. Iar in cazul primirii de date pe socketul UDP, se trata
+fiecare caz si se afisau comenzile, respectiv raspunsurile corespunzatoare. In cazul in care una dintre
+comenzile de recv sau recvfrom intoarce 0, un flag numit "stop" se activeaza iar clientul isi inceteaza
+activitatea. 
+	In fisierul de server am deschis, de asemenea, 2 socketi, unul TCP folosit pentru IBANK> si unul UDP 
+folosit pentru UNLOCK>. In caz de eroare la apelul oricarei functii legate de socketi (accept, bind etc.)
+se intoarce codul de eroare -10 pe ecran cu mesajul corespunzator. Apoi am folosit o bucla infinita in care 
+am apelat functia select pentru a multiplexa intre citirea de la tastatura, socketul TCP si socketulUDP. 
+In cazul citirii de la tastatura, se putea primi comanda quit care trimitea tuturor clientilor conectati
+intentia serverului de a se deconecta. In cazul primirii de date pe socketul TCP, se trata fiecare comanda
+in parte si se trimitea raspunsul inapoi clientului corespunzator in functie de raspunsul serverului. 
+In cazul primirii de date pe socketul UDP, se trata fiecare comanda de unlock in parte si se trimitea raspunsul
+corespunzator. In cazul comenzii de transfer si celei de unlock, s-a folosit un flag pentru a verifica daca este
+un transfer/deblocare in curs, pentru a putea primi raspunsul de confirmare sau anulare fara a bloca fluxul serverului.
+Toate comenzile au fost implementate conform cerintei. 
